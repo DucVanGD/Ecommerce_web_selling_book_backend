@@ -12,23 +12,43 @@ class Product(db.Model):
     detail = Column(String(200), nullable=True)
     ptype = Column(String(50), nullable=False)
     stock = Column(Integer, default=1)
-    #pcarts = relationship('PCart', backref='product', lazy = True)
+    pcarts = relationship('PCart', back_populates='product', lazy = True)
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name':self.name,
+            'img':self.img,
+            'price':self.price,
+            'author':self.author,
+            'detail':self.detail,
+            'ptype': self.ptype,
+            'stock': self.stock
+        }
 
 
 
-
-class PCart(Product):
+class PCart(db.Model):
 
     id = Column(Integer, ForeignKey('product.id'), primary_key=True)
     date = Column(DATETIME, default=datetime.now)
     num = Column(Integer, default=1)
-    product = relationship('Product', backref='pcarts', lazy = True)
+    product = relationship('Product', back_populates='pcarts', lazy = True)
     def to_dict(self):
-        return {
-            'id': self.id,
-            'date':self.date,
-            'num': self.num
-        }
+        if self.product:
+            product_info = self.product
+            return {
+                'id': self.id,
+                'name': product_info.name,
+                'img': product_info.img,
+                'price': product_info.price,
+                'author': product_info.author,
+                'date': self.date, 
+                'detail': product_info.detail,
+                'ptype': product_info.ptype,
+                'num': self.num
+            }
+        else:
+            return 'Khong tim thay san pham trong DSSP'
 
 class User(db.Model):
     id = Column(Integer, primary_key= True, autoincrement= True)
