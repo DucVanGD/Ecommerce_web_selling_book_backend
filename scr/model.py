@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class Product(db.Model):
-    id = Column(Integer, primary_key=True)
+    id = Column(String(20), primary_key=True)
     name = Column(String(100), nullable=False)
     img = Column(String(100), nullable=False)
     price = Column(Integer, nullable=False)
@@ -29,7 +29,7 @@ class Product(db.Model):
 
 class PCart(db.Model):
 
-    id = Column(Integer, ForeignKey('product.id'), primary_key=True)
+    id = Column(String(20), ForeignKey('product.id'), primary_key=True)
     date = Column(DATETIME, default=datetime.now)
     num = Column(Integer, default=1)
     product = relationship('Product', back_populates='pcarts', lazy = True)
@@ -51,14 +51,14 @@ class PCart(db.Model):
             return 'Khong tim thay san pham trong DSSP'
 
 class User(db.Model):
-    id = Column(Integer, primary_key= True, autoincrement= True)
+    id = Column(String(20), primary_key= True, autoincrement= True)
     username = Column(String(100),nullable=  False, unique= True)
     password = Column(String(100),nullable=  False)
     email = Column(String(50),nullable=  True)
     phone = Column(String(20),nullable=  True)
     img = Column(String(100),nullable=  True)
     point = Column(Integer,nullable=  False, default= 0)
-    birthday = Column(DATETIME,nullable=  False)
+    birthday = Column(String(20),nullable=  False)
     gender = Column(String(10),nullable=  False)
     purchased = Column(Integer,nullable=  False, default= 0)
     donations = Column(Integer,nullable=  False, default= 0)

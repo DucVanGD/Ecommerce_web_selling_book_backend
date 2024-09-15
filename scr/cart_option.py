@@ -14,33 +14,35 @@ class CartOption:
         products = pc.all()
         return jsonify([p.to_dict() for p in products]) if len(products) else 'Khong thay san pham'
     
-    def add_Cart(self):
+    def add_Cart(self,product_id = None):
         try:
-            data = request.get_json()
-            if not data or 'product_id' not in data:
-                return jsonify({"error": "Invalid input"}), 400
-            
-            product_id = data['product_id']
+            if not product_id:
+                data = request.get_json()
+                if not data or 'id' not in data:
+                    return jsonify({"error": "Invalid input"}), 400
+                
+                product_id = data['id']
             pc = PCart.query.get(product_id)
             if pc:
                 pc.num += 1
                 self.db.session.commit()
+                return jsonify({"message": f"Sản phẩm {product_id} đã thêm số lượng"}), 200
             else:
                 prod = PCart(id=product_id)
                 self.db.session.add(prod)
                 self.db.session.commit()
-                
-            return jsonify({"message": "Sản phẩm đã thêm vào Giỏ hàng"}), 200
+                return jsonify({"message": "Sản phẩm đã thêm vào Giỏ hàng"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    def delete_Cart(self):
+    def delete_Cart(self,product_id = None):
         try:
-            data = request.get_json()
-            if not data or 'product_id' not in data:
-                return jsonify({"error": "Invalid input"}), 400
-            
-            product_id = data['product_id']
+            if not product_id:
+                data = request.get_json()
+                if not data or 'product_id' not in data:
+                    return jsonify({"error": "Invalid input"}), 400
+                
+                product_id = data['product_id']
             item = PCart.query.get(product_id)
             if item:
                 self.db.session.delete(item)
